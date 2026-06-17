@@ -144,6 +144,8 @@ class ProfilePage(QWidget):
         try:
             self.profile_controller.update_profile(self.id_compte, nom, prenom, email, self.username)
             QMessageBox.information(self, "Succès", "Votre profil a été mis à jour.")
+            if hasattr(self.parent_window, "update_session_info_label"):
+                self.parent_window.update_session_info_label(nom)
         except Exception as e:
             QMessageBox.critical(self, "Erreur", f"Erreur : {e}")
 

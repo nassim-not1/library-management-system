@@ -7,6 +7,7 @@ from PySide6.QtGui import QColor, QGuiApplication
 from controllers.livre_controller import LivreController
 from controllers.emprunt_controller import EmpruntController
 from controllers.auth_controller import AuthController
+from controllers.profile_controller import ProfileController
 from views.profile_page import ProfilePage
 
 def create_shadow():
@@ -498,11 +499,17 @@ class MainWindow(QMainWindow):
         
         self.current_user = current_user or {"username": "invite", "role": "user"}
         self.current_user["role"] = str(self.current_user.get("role", "user")).strip().lower()
+        self.current_user["display_name"] = self.current_user.get("display_name") or self.current_user.get("username")
         self.is_admin = self.current_user["role"] == "admin"
         
         self.controller = LivreController()
         self.emprunt_controller = EmpruntController()
         self.auth_controller = AuthController()
+        self.profile_controller = ProfileController()
+
+        profile = self.profile_controller.get_profile(self.current_user.get("id_compte"))
+        if profile and profile.get("nom"):
+            self.current_user["display_name"] = profile["nom"]
         
         self.setup_ui()
         # Active le premier onglet au démarrage
@@ -532,6 +539,14 @@ class MainWindow(QMainWindow):
         y = available.y() + max(0, (available.height() - size.height()) // 2)
         self.move(x, y)
 
+    def update_session_info_label(self, display_name=None):
+        if display_name is None:
+            display_name = self.current_user.get("display_name") or self.current_user["username"]
+        else:
+            self.current_user["display_name"] = display_name
+
+        self.session_info_label.setText(f"{display_name} ({self.current_user['role']})")
+
     def setup_ui(self):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -552,10 +567,11 @@ class MainWindow(QMainWindow):
         app_title.setAlignment(Qt.AlignLeft)
         sidebar_layout.addWidget(app_title)
 
-        session_info = QLabel(f"{self.current_user['username']} ({self.current_user['role']})")
-        session_info.setObjectName("sessionLabel")
-        session_info.setAlignment(Qt.AlignLeft)
-        sidebar_layout.addWidget(session_info)
+        display_name = self.current_user.get("display_name") or self.current_user["username"]
+        self.session_info_label = QLabel(f"{display_name} ({self.current_user['role']})")
+        self.session_info_label.setObjectName("sessionLabel")
+        self.session_info_label.setAlignment(Qt.AlignLeft)
+        sidebar_layout.addWidget(self.session_info_label)
         sidebar_layout.addSpacing(8)
 
         nav_label = QLabel("Navigation")
