@@ -121,6 +121,27 @@ class AuthController:
         df.loc[mask, "role"] = "admin"
         self.db.save_table("comptes", df)
 
+    def update_username(self, id_compte, new_username):
+        new_username = str(new_username).strip()
+        if not new_username:
+            raise ValueError("Le nom d'utilisateur est obligatoire.")
+
+        df = self.db.load_table("comptes").fillna("")
+        mask = df["id_compte"] == str(id_compte)
+
+        if not mask.any():
+            raise ValueError("Compte introuvable.")
+
+        current_username = str(df.loc[mask, "username"].iloc[0])
+        if current_username.lower() == new_username.lower():
+            return
+
+        if (df["username"].str.lower() == new_username.lower()).any():
+            raise ValueError("Ce nom d'utilisateur existe deja.")
+
+        df.loc[mask, "username"] = new_username
+        self.db.save_table("comptes", df)
+
     def update_password(self, id_compte, old_password, new_password):
         df = self.db.load_table("comptes").fillna("")
         mask = df["id_compte"] == str(id_compte)

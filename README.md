@@ -169,4 +169,3 @@ Dans l'application :
 ## Remarques
 
 - Le style de l'application est defini dans `views/style.py`.
-- La configuration MySQL d'exemple est disponible dans `mysql_config_example.txt`.

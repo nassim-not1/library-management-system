@@ -59,6 +59,9 @@ class ProfilePage(QWidget):
         form1 = QFormLayout()
         form1.setSpacing(15)
         
+        self.username_input = QLineEdit()
+        self.username_input.setPlaceholderText("Nom d'utilisateur (identifiant de connexion)")
+
         self.nom_input = QLineEdit()
         self.nom_input.setPlaceholderText("Nom (obligatoire)")
         
@@ -68,6 +71,7 @@ class ProfilePage(QWidget):
         self.email_input = QLineEdit()
         self.email_input.setPlaceholderText("Adresse Email")
 
+        form1.addRow("Nom d'utilisateur :", self.username_input)
         form1.addRow("Nom :", self.nom_input)
         form1.addRow("Prénom :", self.prenom_input)
         form1.addRow("Email :", self.email_input)
@@ -132,20 +136,35 @@ class ProfilePage(QWidget):
         else:
             self.nom_input.setText(self.username)
 
+        self.username_input.setText(self.username)
+
     def save_profile(self):
+        username = self.username_input.text().strip()
         nom = self.nom_input.text().strip()
         prenom = self.prenom_input.text().strip()
         email = self.email_input.text().strip()
+
+        if not username:
+            QMessageBox.warning(self, "Erreur", "Le nom d'utilisateur est obligatoire.")
+            return
 
         if not nom:
             QMessageBox.warning(self, "Erreur", "Le nom est obligatoire.")
             return
 
         try:
+            if username.lower() != self.username.lower():
+                self.auth_controller.update_username(self.id_compte, username)
+                self.username = username
+                if hasattr(self.parent_window, "current_user"):
+                    self.parent_window.current_user["username"] = username
+
             self.profile_controller.update_profile(self.id_compte, nom, prenom, email, self.username)
             QMessageBox.information(self, "Succès", "Votre profil a été mis à jour.")
             if hasattr(self.parent_window, "update_session_info_label"):
                 self.parent_window.update_session_info_label(nom)
+        except ValueError as ve:
+            QMessageBox.warning(self, "Erreur", str(ve))
         except Exception as e:
             QMessageBox.critical(self, "Erreur", f"Erreur : {e}")
 
