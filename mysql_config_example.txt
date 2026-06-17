@@ -1,0 +1,10 @@
+Configuration MySQL utilisee par defaut:
+
+MYSQL_HOST=127.0.0.1
+MYSQL_PORT=3306
+MYSQL_DATABASE=gestion_bibliotheque
+MYSQL_USER=root
+MYSQL_PASSWORD=
+
+Si votre MySQL utilise un autre mot de passe ou un autre utilisateur,
+definissez ces variables d'environnement avant de lancer main.py.

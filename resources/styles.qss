@@ -1,0 +1,154 @@
+/* Global Font */
+* {
+    font-family: 'Segoe UI', 'Inter', 'Roboto', sans-serif;
+    font-size: 14px;
+}
+
+QMainWindow, QDialog {
+    background-color: #121212;
+    color: #FFFFFF;
+}
+
+QLabel {
+    color: #E0E0E0;
+}
+
+QLabel#mainTitle {
+    font-size: 24px;
+    font-weight: 900;
+    color: #BB86FC;
+    padding: 20px 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #2C2C2C;
+}
+
+QLabel#sessionLabel {
+    color: #B0B0B0;
+    font-size: 12px;
+    padding: 0px 16px 16px 16px;
+}
+
+/* Sidebar */
+QFrame#sidebar {
+    background-color: #1A1A1A;
+    border-right: 1px solid #2C2C2C;
+}
+
+QPushButton.sidebarButton {
+    background-color: transparent;
+    color: #B0B0B0;
+    border: none;
+    text-align: left;
+    padding: 15px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 0px;
+    border-left: 4px solid transparent;
+}
+
+QPushButton.sidebarButton:hover {
+    background-color: #242424;
+    color: #FFFFFF;
+}
+
+QPushButton.sidebarButton[active="true"] {
+    background-color: #2A2A2A;
+    color: #BB86FC;
+    border-left: 4px solid #BB86FC;
+}
+
+/* Main Content */
+QFrame#mainContainer {
+    background-color: #121212;
+}
+
+/* Inputs */
+QLineEdit {
+    background-color: #1E1E1E;
+    border: 1px solid #333333;
+    border-radius: 8px;
+    padding: 12px 15px;
+    color: #FFFFFF;
+    font-size: 14px;
+    selection-background-color: #BB86FC;
+}
+
+QLineEdit:focus {
+    border: 1px solid #BB86FC;
+}
+
+QLineEdit::placeholder {
+    color: #888888;
+}
+
+/* Buttons */
+QPushButton {
+    background-color: #2C2C2C;
+    color: #FFFFFF;
+    border: 1px solid #3A3A3A;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #3A3A3A;
+    border: 1px solid #BB86FC;
+}
+
+QPushButton#primaryAction {
+    background-color: #BB86FC;
+    color: #121212;
+    border: none;
+}
+QPushButton#primaryAction:hover { background-color: #9965F4; }
+
+QPushButton#dangerAction {
+    background-color: #CF6679;
+    color: #121212;
+    border: none;
+}
+QPushButton#dangerAction:hover { background-color: #B35564; }
+
+/* Table Widget */
+QTableWidget {
+    background-color: #1E1E1E;
+    color: #FFFFFF;
+    border: 1px solid #2C2C2C;
+    border-radius: 8px;
+    gridline-color: transparent;
+    selection-background-color: #3700B3;
+    selection-color: #FFFFFF;
+    alternate-background-color: #1A1A1A;
+    outline: 0;
+}
+
+QTableWidget::item {
+    padding: 10px;
+    border-bottom: 1px solid #2C2C2C;
+}
+
+QHeaderView::section {
+    background-color: #1A1A1A;
+    color: #BB86FC;
+    padding: 15px;
+    border: none;
+    border-bottom: 2px solid #2C2C2C;
+    font-weight: bold;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+/* ScrollBar */
+QScrollBar:vertical {
+    background: #121212;
+    width: 10px;
+}
+QScrollBar::handle:vertical {
+    background: #333333;
+    border-radius: 5px;
+}
+QScrollBar::handle:vertical:hover { background: #BB86FC; }
+
+QMessageBox { background-color: #1E1E1E; }
+QMessageBox QLabel { color: #FFFFFF; font-size: 14px; }

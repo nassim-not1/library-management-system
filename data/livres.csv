@@ -1,0 +1,7 @@
+id_livre,titre,categorie,disponibilite,id_auteur,annee
+1,L Etranger,Roman,Disponible,1,1942
+2,Les Miserables,Roman,Emprunté,2,1862
+3,Harry Potter 1,Fantastique,Disponible,3,1997
+4,1984,Science-fiction,Emprunté,4,1949
+5,Le Meurtre de Roger Ackroyd,Policier,Disponible,5,1926
+6,La Peste,Roman,Disponible,1,1947
