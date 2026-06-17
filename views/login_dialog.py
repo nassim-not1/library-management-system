@@ -55,7 +55,14 @@ class LoginDialog(QDialog):
         self.password_input.setPlaceholderText("Mot de passe")
         self.password_input.setEchoMode(QLineEdit.Password)
         self.password_input.returnPressed.connect(self.login)
+        self.password_input.textChanged.connect(self.clear_error)
         form_layout.addWidget(self.password_input)
+
+        self.error_label = QLabel("")
+        self.error_label.setObjectName("authErrorLabel")
+        self.error_label.setWordWrap(True)
+        self.error_label.hide()
+        form_layout.addWidget(self.error_label)
 
         form_layout.addStretch()
 
@@ -81,30 +88,38 @@ class LoginDialog(QDialog):
 
         main_layout.addWidget(form_frame)
 
+    def show_error(self, message, focus_widget=None):
+        self.password_input.blockSignals(True)
+        self.password_input.clear()
+        self.password_input.blockSignals(False)
+        self.error_label.setText(message)
+        self.error_label.show()
+        if focus_widget:
+            focus_widget.setFocus()
+
+    def clear_error(self):
+        self.error_label.clear()
+        self.error_label.hide()
+
     def login(self):
         username = self.username_input.text().strip()
         password = self.password_input.text()
 
         if not username or not password:
-            QMessageBox.warning(self, "Erreur", "Veuillez saisir le nom d'utilisateur et le mot de passe.")
-            self.password_input.clear()
-            self.username_input.setFocus()
+            self.show_error("Veuillez saisir le nom d'utilisateur et le mot de passe.", self.username_input)
             return
 
         try:
             user = self.auth_controller.authenticate(username, password)
         except Exception as e:
-            QMessageBox.warning(self, "Erreur", f"Authentification impossible : {e}")
-            self.password_input.clear()
-            self.password_input.setFocus()
+            self.show_error(f"Authentification impossible : {e}", self.password_input)
             return
 
         if not user:
-            QMessageBox.warning(self, "Erreur", "Identifiants incorrects.")
-            self.password_input.clear()
-            self.password_input.setFocus()
+            self.show_error("Identifiants incorrects. Verifiez le nom d'utilisateur et le mot de passe.", self.password_input)
             return
 
+        self.clear_error()
         self.authenticated_user = user
         self.accept()
 

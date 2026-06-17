@@ -2,10 +2,12 @@ import pandas as pd
 from models.livre import Livre
 from models.auteur import Auteur
 from data.database import Database
+from services.recommendation_service import RecommendationService
 
 class LivreController:
     def __init__(self):
         self.db = Database()
+        self.recommendation_service = RecommendationService()
 
     def _format_auteur(self, row):
         nom = str(row.get("nom", "")).strip()
@@ -84,7 +86,7 @@ class LivreController:
             
         return df_merged.fillna("").to_dict('records')
 
-    def add_livre(self, titre, auteur_ref, categorie, annee):
+    def add_livre(self, titre, auteur_ref, categorie, annee, description="", mots_cles=""):
         if not titre or not auteur_ref:
             raise ValueError("Le titre et l'auteur sont obligatoires.")
         
@@ -92,13 +94,13 @@ class LivreController:
         
         df = self.db.load_table("livres")
         new_id = self.db.generate_id("livres", "id_livre")
-        nouveau_livre = Livre(new_id, titre, categorie, "Disponible", id_auteur, annee)
+        nouveau_livre = Livre(new_id, titre, categorie, "Disponible", id_auteur, annee, description, mots_cles)
         
         new_row = pd.DataFrame([nouveau_livre.to_dict()])
         df = pd.concat([df, new_row], ignore_index=True)
         self.db.save_table("livres", df)
 
-    def update_livre(self, id_livre, titre, auteur_ref, categorie, annee):
+    def update_livre(self, id_livre, titre, auteur_ref, categorie, annee, description="", mots_cles=""):
         if not titre or not auteur_ref:
             raise ValueError("Le titre et l'auteur sont obligatoires.")
 
@@ -113,6 +115,8 @@ class LivreController:
         df.loc[mask, "id_auteur"] = id_auteur
         df.loc[mask, "categorie"] = categorie
         df.loc[mask, "annee"] = annee
+        df.loc[mask, "description"] = description
+        df.loc[mask, "mots_cles"] = mots_cles
         self.db.save_table("livres", df)
 
     def delete_livre(self, id_livre):
@@ -144,9 +148,15 @@ class LivreController:
         for l in livres:
             if (keyword in str(l.get('titre', '')).lower() or 
                 keyword in str(l.get('auteur', '')).lower() or 
-                keyword in str(l.get('categorie', '')).lower()):
+                keyword in str(l.get('categorie', '')).lower() or
+                keyword in str(l.get('description', '')).lower() or
+                keyword in str(l.get('mots_cles', '')).lower()):
                 result.append(l)
         return result
+
+    def get_livres_recommandes(self, id_livre, top_n=5):
+        livres = self.get_all_livres()
+        return self.recommendation_service.recommend_by_book(livres, id_livre, top_n)
 
     def get_livres_empruntes(self):
         livres = self.get_all_livres()

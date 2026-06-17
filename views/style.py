@@ -14,6 +14,16 @@ QLabel {
     color: #374151;
 }
 
+QLabel#authErrorLabel {
+    background-color: #FEF2F2;
+    color: #B91C1C;
+    border: 1px solid #FECACA;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
 QLabel#pageTitle, QLabel#mainTitle {
     font-size: 26px;
     font-weight: 900;

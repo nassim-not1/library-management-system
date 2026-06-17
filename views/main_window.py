@@ -201,7 +201,7 @@ class BaseTablePage(BasePage):
             self.populate_table(self.current_data)
             return
         text = text.lower()
-        searchable_fields = ["titre", "auteur", "categorie", "emprunteur", "nom", "prenom", "nationalite", "username"]
+        searchable_fields = ["titre", "auteur", "categorie", "description", "mots_cles", "emprunteur", "nom", "prenom", "nationalite", "username"]
         filtered = [
             l for l in self.current_data
             if any(text in str(l.get(f, "")).lower() for f in searchable_fields)
@@ -212,8 +212,9 @@ class ManageBooksPage(BaseTablePage):
     def __init__(self, main_window):
         super().__init__(main_window, "📚 Tous les livres")
         self.set_columns([
-            ("id_livre", "ID"), ("titre", "Titre"), ("auteur", "Auteur"), 
-            ("categorie", "Catégorie"), ("annee", "Année"), ("statut", "Statut")
+            ("id_livre", "ID"), ("titre", "Titre"), ("auteur", "Auteur"),
+            ("categorie", "Categorie"), ("annee", "Annee"), ("description", "Description"),
+            ("mots_cles", "Mots cles"), ("statut", "Statut"), ("score_recommandation", "Similarite")
         ])
         
         if self.is_admin:
@@ -231,12 +232,21 @@ class ManageBooksPage(BaseTablePage):
             self.inp_categorie.setPlaceholderText("Catégorie")
             self.inp_annee = QLineEdit()
             self.inp_annee.setPlaceholderText("Année")
+            self.inp_description = QLineEdit()
+            self.inp_description.setPlaceholderText("Description")
+            self.inp_mots_cles = QLineEdit()
+            self.inp_mots_cles.setPlaceholderText("Mots cles")
             
             inputs_layout.addWidget(self.inp_titre)
             inputs_layout.addWidget(self.inp_auteur)
             inputs_layout.addWidget(self.inp_categorie)
             inputs_layout.addWidget(self.inp_annee)
             form_layout.addLayout(inputs_layout)
+
+            details_layout = QHBoxLayout()
+            details_layout.addWidget(self.inp_description)
+            details_layout.addWidget(self.inp_mots_cles)
+            form_layout.addLayout(details_layout)
             
             self.layout.insertWidget(2, self.form_frame)
             
@@ -272,15 +282,21 @@ class ManageBooksPage(BaseTablePage):
                 self.inp_auteur.addItem(label, str(a.get("id_auteur", "")))
         self.load_data(self.controller.get_all_livres())
 
+    def _table_text(self, row, column):
+        item = self.table.item(row, column)
+        return item.text() if item else ""
+
     def on_selection(self):
         if not self.is_admin: return
         selected = self.table.selectedItems()
         if not selected: return
         row = selected[0].row()
-        self.inp_titre.setText(self.table.item(row, 1).text())
-        self.inp_categorie.setText(self.table.item(row, 3).text())
-        self.inp_annee.setText(self.table.item(row, 4).text())
-        auteur_text = self.table.item(row, 2).text()
+        self.inp_titre.setText(self._table_text(row, 1))
+        self.inp_categorie.setText(self._table_text(row, 3))
+        self.inp_annee.setText(self._table_text(row, 4))
+        self.inp_description.setText(self._table_text(row, 5))
+        self.inp_mots_cles.setText(self._table_text(row, 6))
+        auteur_text = self._table_text(row, 2)
         idx = self.inp_auteur.findText(auteur_text)
         if idx >= 0: self.inp_auteur.setCurrentIndex(idx)
 
@@ -288,7 +304,8 @@ class ManageBooksPage(BaseTablePage):
         try:
             self.controller.add_livre(
                 self.inp_titre.text(), self.inp_auteur.currentData(),
-                self.inp_categorie.text(), self.inp_annee.text()
+                self.inp_categorie.text(), self.inp_annee.text(),
+                self.inp_description.text(), self.inp_mots_cles.text()
             )
             self.refresh()
             QMessageBox.information(self, "Succès", "Livre ajouté.")
@@ -301,7 +318,8 @@ class ManageBooksPage(BaseTablePage):
         try:
             self.controller.update_livre(
                 book_id, self.inp_titre.text(), self.inp_auteur.currentData(),
-                self.inp_categorie.text(), self.inp_annee.text()
+                self.inp_categorie.text(), self.inp_annee.text(),
+                self.inp_description.text(), self.inp_mots_cles.text()
             )
             self.refresh()
             QMessageBox.information(self, "Succès", "Livre modifié.")
@@ -328,6 +346,74 @@ class ManageBooksPage(BaseTablePage):
             QMessageBox.information(self, "Succès", "Livre emprunté.")
         except Exception as e:
             QMessageBox.warning(self, "Erreur", str(e))
+
+class RecommendationsPage(BaseTablePage):
+    def __init__(self, main_window):
+        super().__init__(main_window, "Recommandations")
+        self.set_columns([
+            ("id_livre", "ID"), ("titre", "Titre"), ("auteur", "Auteur"),
+            ("categorie", "Categorie"), ("annee", "Annee"),
+            ("score_recommandation", "Similarite"), ("description", "Description"),
+            ("mots_cles", "Mots cles"), ("statut", "Statut")
+        ])
+
+        selector_frame = QFrame()
+        selector_frame.setObjectName("formContainer")
+        selector_layout = QHBoxLayout(selector_frame)
+        selector_layout.setContentsMargins(15, 15, 15, 15)
+
+        self.book_combo = QComboBox()
+        self.book_combo.setMinimumWidth(320)
+        selector_layout.addWidget(self.book_combo, 1)
+
+        btn_recommend = QPushButton("Recommander")
+        btn_recommend.setObjectName("primaryAction")
+        btn_recommend.clicked.connect(self.on_recommend)
+        selector_layout.addWidget(btn_recommend)
+
+        btn_clear = QPushButton("Effacer")
+        btn_clear.clicked.connect(lambda _: self.load_data([]))
+        selector_layout.addWidget(btn_clear)
+
+        self.layout.insertWidget(1, selector_frame)
+        self.action_layout.addStretch()
+
+    def refresh(self):
+        current_id = self.book_combo.currentData()
+        self.book_combo.clear()
+
+        for livre in self.controller.get_all_livres():
+            title = str(livre.get("titre", "")).strip()
+            author = str(livre.get("auteur", "")).strip()
+            label = f"{title} - {author}" if author else title
+            self.book_combo.addItem(label, str(livre.get("id_livre", "")))
+
+        if current_id:
+            index = self.book_combo.findData(current_id)
+            if index >= 0:
+                self.book_combo.setCurrentIndex(index)
+
+        if not self.current_data:
+            self.load_data([])
+
+    def on_recommend(self):
+        book_id = self.book_combo.currentData()
+        if not book_id:
+            QMessageBox.warning(self, "Attention", "Aucun livre selectionne.")
+            return
+
+        try:
+            recommendations = self.controller.get_livres_recommandes(book_id)
+        except Exception as e:
+            QMessageBox.warning(self, "Erreur", str(e))
+            return
+
+        if not recommendations:
+            QMessageBox.information(self, "Recommandations", "Aucun livre similaire trouve.")
+            self.load_data([])
+            return
+
+        self.load_data(recommendations)
 
 class ManageAuthorsPage(BaseTablePage):
     def __init__(self, main_window):
@@ -515,6 +601,7 @@ class MainWindow(QMainWindow):
 
         add_nav("Dashboard", DashboardPage(self))
         add_nav("Tous les livres", ManageBooksPage(self))
+        add_nav("Recommandations", RecommendationsPage(self))
         add_nav("Livres les plus empruntés", ActionTablePage(
             self, "Livres les plus empruntés", self.emprunt_controller.get_livres_plus_empruntes,
             [("id_livre", "ID"), ("titre", "Titre"), ("auteur", "Auteur"), ("nombre_emprunts", "Nb emprunts")],

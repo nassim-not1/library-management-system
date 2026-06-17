@@ -22,7 +22,7 @@ class Database:
         }
 
         self.columns = {
-            "livres": ["id_livre", "titre", "categorie", "disponibilite", "id_auteur", "annee"],
+            "livres": ["id_livre", "titre", "categorie", "disponibilite", "id_auteur", "annee", "description", "mots_cles"],
             "auteurs": ["id_auteur", "nom", "prenom", "nationalite"],
             "utilisateurs": ["id_utilisateur", "nom", "prenom", "email"],
             "emprunts": ["id_emprunt", "date_emprunt", "date_limite", "date_retour", "statut", "id_livre", "id_utilisateur"],
@@ -98,7 +98,9 @@ class Database:
                     categorie VARCHAR(255) NOT NULL DEFAULT '',
                     disponibilite VARCHAR(64) NOT NULL DEFAULT 'Disponible',
                     id_auteur VARCHAR(64) NOT NULL DEFAULT '',
-                    annee VARCHAR(64) NOT NULL DEFAULT ''
+                    annee VARCHAR(64) NOT NULL DEFAULT '',
+                    description TEXT NULL,
+                    mots_cles TEXT NULL
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             """,
             "utilisateurs": """
@@ -152,6 +154,10 @@ class Database:
 
     def _ensure_missing_columns(self):
         definitions = {
+            "livres": {
+                "description": "TEXT NULL AFTER `annee`",
+                "mots_cles": "TEXT NULL AFTER `description`",
+            },
             "emprunts": {
                 "date_limite": "VARCHAR(64) NOT NULL DEFAULT '' AFTER `date_emprunt`",
             }
