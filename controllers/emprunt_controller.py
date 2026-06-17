@@ -6,7 +6,6 @@ from data.database import Database
 
 class EmpruntController:
     DUREE_EMPRUNT_JOURS = 14
-    STATUT_RESERVATION_ATTENTE = "En attente"
 
     def __init__(self):
         self.db = Database()

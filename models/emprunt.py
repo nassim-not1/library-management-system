@@ -8,16 +8,6 @@ class Emprunt:
         self.id_livre = id_livre
         self.id_utilisateur = id_utilisateur
 
-    def creer(self):
-        self.statut = "Actif"
-
-    def cloturer(self, date_retour):
-        self.statut = "Cloturé"
-        self.date_retour = date_retour
-
-    def est_actif(self):
-        return self.statut == "Actif"
-
     def to_dict(self):
         return {
             "id_emprunt": self.id_emprunt,

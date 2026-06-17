@@ -1,5 +1,4 @@
 import sys
-import os
 from PySide6.QtWidgets import QApplication, QDialog
 from views.main_window import MainWindow
 from views.login_dialog import LoginDialog

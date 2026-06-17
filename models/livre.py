@@ -9,15 +9,6 @@ class Livre:
         self.description = description
         self.mots_cles = mots_cles
 
-    def est_disponible(self):
-        return self.disponibilite == "Disponible"
-
-    def emprunter(self):
-        self.disponibilite = "Emprunté"
-
-    def retourner(self):
-        self.disponibilite = "Disponible"
-
     def to_dict(self):
         return {
             "id_livre": self.id_livre,

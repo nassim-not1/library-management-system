@@ -1,3 +1,6 @@
+import re
+import unicodedata
+
 import pandas as pd
 from models.livre import Livre
 from models.auteur import Auteur
@@ -13,6 +16,30 @@ class LivreController:
         nom = str(row.get("nom", "")).strip()
         prenom = str(row.get("prenom", "")).strip()
         return f"{nom} {prenom}".strip()
+
+    def _normalize_text(self, value):
+        value = str(value).strip().casefold()
+        value = unicodedata.normalize("NFKD", value)
+        value = "".join(char for char in value if not unicodedata.combining(char))
+        value = re.sub(r"[^a-z0-9]+", " ", value)
+        return re.sub(r"\s+", " ", value).strip()
+
+    def _ensure_livre_unique(self, df_livres, titre, id_auteur, exclude_id=None):
+        if df_livres.empty:
+            return
+
+        titre_normalise = self._normalize_text(titre)
+        id_auteur = str(id_auteur).strip()
+        mask = (
+            df_livres["titre"].fillna("").apply(self._normalize_text).eq(titre_normalise) &
+            df_livres["id_auteur"].fillna("").astype(str).str.strip().eq(id_auteur)
+        )
+
+        if exclude_id is not None:
+            mask = mask & ~df_livres["id_livre"].astype(str).eq(str(exclude_id))
+
+        if mask.any():
+            raise ValueError("Ce livre existe deja pour cet auteur.")
 
     def get_all_auteurs(self):
         df_auteurs = self.db.load_table("auteurs").fillna("")
@@ -93,6 +120,7 @@ class LivreController:
         id_auteur = self._resolve_auteur_id(auteur_ref)
         
         df = self.db.load_table("livres")
+        self._ensure_livre_unique(df, titre, id_auteur)
         new_id = self.db.generate_id("livres", "id_livre")
         nouveau_livre = Livre(new_id, titre, categorie, "Disponible", id_auteur, annee, description, mots_cles)
         
@@ -110,6 +138,8 @@ class LivreController:
         mask = df["id_livre"] == str(id_livre)
         if not mask.any():
             raise ValueError("Livre introuvable.")
+
+        self._ensure_livre_unique(df, titre, id_auteur, exclude_id=id_livre)
         
         df.loc[mask, "titre"] = titre
         df.loc[mask, "id_auteur"] = id_auteur
@@ -138,26 +168,6 @@ class LivreController:
         df = df[~mask]
         self.db.save_table("livres", df)
 
-    def search_livres(self, keyword):
-        livres = self.get_all_livres()
-        if not livres:
-            return []
-            
-        keyword = str(keyword).lower()
-        result = []
-        for l in livres:
-            if (keyword in str(l.get('titre', '')).lower() or 
-                keyword in str(l.get('auteur', '')).lower() or 
-                keyword in str(l.get('categorie', '')).lower() or
-                keyword in str(l.get('description', '')).lower() or
-                keyword in str(l.get('mots_cles', '')).lower()):
-                result.append(l)
-        return result
-
     def get_livres_recommandes(self, id_livre, top_n=5):
         livres = self.get_all_livres()
         return self.recommendation_service.recommend_by_book(livres, id_livre, top_n)
-
-    def get_livres_empruntes(self):
-        livres = self.get_all_livres()
-        return [l for l in livres if l.get('disponibilite') == "Emprunté"]
