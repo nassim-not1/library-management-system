@@ -214,7 +214,7 @@ class ManageBooksPage(BaseTablePage):
         self.set_columns([
             ("id_livre", "ID"), ("titre", "Titre"), ("auteur", "Auteur"),
             ("categorie", "Categorie"), ("annee", "Annee"), ("description", "Description"),
-            ("mots_cles", "Mots cles"), ("statut", "Statut"), ("score_recommandation", "Similarite")
+            ("mots_cles", "Mots cles"), ("statut", "Statut")
         ])
         
         if self.is_admin:

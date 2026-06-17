@@ -1,7 +1,19 @@
 id_livre,titre,categorie,disponibilite,id_auteur,annee,description,mots_cles
-1,L Etranger,Roman,Disponible,1,1942,,
-2,Les Miserables,Roman,Emprunté,2,1862,,
-3,Harry Potter 1,Fantastique,Disponible,3,1997,,
-4,1984,Science-fiction,Emprunté,4,1949,,
-5,Le Meurtre de Roger Ackroyd,Policier,Disponible,5,1926,,
-6,La Peste,Roman,Disponible,1,1947,,
+1,L Etranger,Roman,Disponible,1,1942,Histoire d un homme solitaire confronte a l absurde et au jugement social,absurde solitude justice roman philosophique algerie
+2,Les Miserables,Roman,Emprunté,2,1862,Fresque sociale sur la misere la redemption et la justice dans la France du dix neuvieme siecle,justice misere redemption societe historique france
+3,Harry Potter 1,Fantastique,Disponible,3,1997,Un jeune sorcier decouvre une ecole de magie et affronte les secrets de son passe,magie sorcier ecole aventure amitie fantasy
+4,1984,Science-fiction,Emprunté,4,1949,Une societe totalitaire surveille les citoyens et controle la pensee par la peur,totalitarisme surveillance dystopie politique liberte
+5,Le Meurtre de Roger Ackroyd,Policier,Disponible,5,1926,Une enquete ingenieuse menee autour d un meurtre dans un village anglais,policier enquete meurtre suspense detective village
+6,La Peste,Roman,Disponible,1,1947,Une ville frappee par une epidemie revele le courage la peur et la solidarite,epidemie solidarite absurde maladie courage roman philosophique
+7,Harry Potter 2,Fantastique,Disponible,3,1998,Le jeune sorcier retourne a l ecole et affronte une chambre secrete pleine de dangers,magie sorcier ecole mystere creature fantasy
+8,Le Seigneur des Anneaux,Fantastique,Disponible,6,1954,Une quete epique oppose des peuples libres a une force obscure qui menace le monde,quete anneau fantasy aventure magie guerre
+9,Le Hobbit,Fantastique,Disponible,6,1937,Un hobbit tranquille part vers une montagne gardee par un dragon avec des compagnons nains,dragon quete aventure fantasy magie voyage
+10,Fondation,Science-fiction,Disponible,7,1951,Des savants tentent de sauver la civilisation grace a la psychohistoire et a la prevision,science fiction empire futur civilisation psychohistoire
+11,Les Robots,Science-fiction,Disponible,7,1950,Des recits explorent les robots l intelligence artificielle et les lois de la robotique,robots intelligence artificielle technologie futur ethique
+12,Vingt mille lieues sous les mers,Aventure,Disponible,8,1870,Une expedition sous marine explore les oceans a bord du Nautilus du capitaine Nemo,mer sous marin exploration aventure science voyage
+13,Le Tour du monde en 80 jours,Aventure,Disponible,8,1872,Un pari audacieux entraine un voyage rapide autour du monde rempli d obstacles,voyage aventure pari monde transport exploration
+14,Sherlock Holmes Etude en rouge,Policier,Disponible,9,1887,Un detective brillant utilise la deduction pour resoudre une affaire criminelle complexe,policier detective deduction enquete crime londres
+15,Le Chien des Baskerville,Policier,Disponible,9,1902,Sherlock Holmes enquete sur une legende familiale et une menace dans les landes,policier detective mystere deduction suspense legende
+16,Les Trois Mousquetaires,Aventure,Disponible,10,1844,Un jeune homme rejoint des mousquetaires dans une histoire de duel d honneur et de complots,duel honneur aventure historique amitie complot
+17,Le Petit Prince,Conte,Disponible,11,1943,Un voyage poetique parle d amitie de responsabilite et du regard de l enfance,conte enfance amitie voyage philosophie poesie
+18,Frankenstein,Science-fiction,Disponible,12,1818,Un savant cree une creature et affronte les consequences morales de son ambition,science fiction creation monstre ethique solitude savant
