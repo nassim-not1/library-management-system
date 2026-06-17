@@ -95,11 +95,11 @@ class EmpruntController:
         return id_compte
 
     def emprunter_livre_pour_compte(self, id_livre, compte):
-        username = str(compte.get("username", "")).strip()
-        if not username:
+        id_utilisateur = self._get_utilisateur_id_pour_compte(compte)
+        if not id_utilisateur:
             raise ValueError("Aucun utilisateur connecte.")
 
-        self.emprunter_livre(id_livre, username, "", "")
+        self._emprunter_livre_pour_utilisateur_id(id_livre, id_utilisateur)
 
     def get_livres_empruntes(self):
         return self._get_livres_empruntes_actifs()
@@ -277,6 +277,29 @@ class EmpruntController:
         df_merged = df_merged.sort_values(by=["_date_tri", "_id_tri"], ascending=[False, False])
         df_merged = df_merged.drop(columns=["_date_tri", "_id_tri"])
         return df_merged.fillna("").to_dict("records")
+
+    def _emprunter_livre_pour_utilisateur_id(self, id_livre, id_user):
+        df_livres = self.db.load_table("livres")
+        mask_livre = df_livres["id_livre"] == str(id_livre)
+        if not mask_livre.any():
+            raise ValueError("Livre introuvable.")
+
+        disponibilite = str(df_livres.loc[mask_livre, "disponibilite"].values[0]).strip().lower()
+        if "emprunt" in disponibilite:
+            raise ValueError("Ce livre est deja emprunte.")
+
+        df_emprunts = self.db.load_table("emprunts")
+        new_id = self.db.generate_id("emprunts", "id_emprunt")
+        date_emprunt = datetime.now().strftime("%Y-%m-%d")
+        date_limite = (datetime.now() + timedelta(days=self.DUREE_EMPRUNT_JOURS)).strftime("%Y-%m-%d")
+
+        nouvel_emprunt = Emprunt(new_id, date_emprunt, "", "Actif", id_livre, id_user, date_limite)
+        new_row = pd.DataFrame([nouvel_emprunt.to_dict()])
+        df_emprunts = pd.concat([df_emprunts, new_row], ignore_index=True)
+        self.db.save_table("emprunts", df_emprunts)
+
+        df_livres.loc[mask_livre, "disponibilite"] = "Emprunte"
+        self.db.save_table("livres", df_livres)
 
     
     def emprunter_livre(self, id_livre, nom_utilisateur, prenom_utilisateur, email=""):

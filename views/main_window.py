@@ -445,9 +445,14 @@ class ManageAuthorsPage(BaseTablePage):
             btn_add = QPushButton("✨ Ajouter")
             btn_add.setObjectName("primaryAction")
             btn_add.clicked.connect(self.on_add)
+
+            btn_delete = QPushButton("Supprimer")
+            btn_delete.setObjectName("dangerAction")
+            btn_delete.clicked.connect(self.on_delete)
             
             btns_layout = QHBoxLayout()
             btns_layout.addWidget(btn_add)
+            btns_layout.addWidget(btn_delete)
             form_layout.addLayout(btns_layout)
             
         self.action_layout.addStretch()
@@ -460,6 +465,22 @@ class ManageAuthorsPage(BaseTablePage):
             self.controller.add_auteur(self.inp_nom.text(), self.inp_prenom.text(), self.inp_nationalite.text())
             self.refresh()
             QMessageBox.information(self, "Succès", "Auteur ajouté.")
+        except Exception as e:
+            QMessageBox.warning(self, "Erreur", str(e))
+
+    def on_delete(self):
+        author_id = self.get_selected_id()
+        if not author_id:
+            return
+
+        reply = QMessageBox.question(self, "Confirmation", "Supprimer cet auteur ?", QMessageBox.Yes | QMessageBox.No)
+        if reply != QMessageBox.Yes:
+            return
+
+        try:
+            self.controller.delete_auteur(author_id)
+            self.refresh()
+            QMessageBox.information(self, "Succès", "Auteur supprimé.")
         except Exception as e:
             QMessageBox.warning(self, "Erreur", str(e))
 
@@ -513,7 +534,9 @@ class MainWindow(QMainWindow):
         
         self.setup_ui()
         # Active le premier onglet au démarrage
-        if self.nav_buttons:
+        if getattr(self, "initial_widget", None) and getattr(self, "initial_button", None):
+            self.switch_tab(self.initial_widget, self.initial_button)
+        elif self.nav_buttons:
             first_widget = self.stacked_widget.widget(0)
             self.switch_tab(first_widget, self.nav_buttons[0])
 
@@ -574,10 +597,6 @@ class MainWindow(QMainWindow):
         sidebar_layout.addWidget(self.session_info_label)
         sidebar_layout.addSpacing(8)
 
-        nav_label = QLabel("Navigation")
-        nav_label.setObjectName("sidebarSectionLabel")
-        sidebar_layout.addWidget(nav_label)
-
         # Zone défilante pour les boutons de navigation
         nav_container = QWidget()
         nav_container.setObjectName("navContainer")
@@ -614,10 +633,22 @@ class MainWindow(QMainWindow):
             btn.clicked.connect(lambda _, w=page_widget, b=btn: self.switch_tab(w, b))
             nav_layout.addWidget(btn)
             self.nav_buttons.append(btn)
+            return btn
 
-        add_nav("Dashboard", DashboardPage(self))
+        account_label = QLabel("Compte")
+        account_label.setObjectName("sidebarSectionLabel")
+        nav_layout.addWidget(account_label)
+        add_nav("Mon Profil", ProfilePage(self, self.current_user))
+
+        nav_layout.addSpacing(14)
+        nav_label = QLabel("Navigation")
+        nav_label.setObjectName("sidebarSectionLabel")
+        nav_layout.addWidget(nav_label)
+
+        dashboard_page = DashboardPage(self)
+        self.initial_widget = dashboard_page
+        self.initial_button = add_nav("Dashboard", dashboard_page)
         add_nav("Tous les livres", ManageBooksPage(self))
-        add_nav("Recommandations", RecommendationsPage(self))
         add_nav("Livres les plus empruntés", ActionTablePage(
             self, "Livres les plus empruntés", self.emprunt_controller.get_livres_plus_empruntes,
             [("id_livre", "ID"), ("titre", "Titre"), ("auteur", "Auteur"), ("nombre_emprunts", "Nb emprunts")],
@@ -655,10 +686,10 @@ class MainWindow(QMainWindow):
             ))
 
         nav_layout.addSpacing(14)
-        account_label = QLabel("Compte")
-        account_label.setObjectName("sidebarSectionLabel")
-        nav_layout.addWidget(account_label)
-        add_nav("Mon Profil", ProfilePage(self, self.current_user))
+        recommendation_label = QLabel("Recommendation")
+        recommendation_label.setObjectName("sidebarSectionLabel")
+        nav_layout.addWidget(recommendation_label)
+        add_nav("Recommandations", RecommendationsPage(self))
         nav_layout.addStretch()
 
         btn_logout = QPushButton("Déconnexion")

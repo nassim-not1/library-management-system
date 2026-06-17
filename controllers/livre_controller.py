@@ -73,6 +73,23 @@ class LivreController:
         df_auteurs = pd.concat([df_auteurs, new_row], ignore_index=True)
         self.db.save_table("auteurs", df_auteurs)
 
+    def delete_auteur(self, id_auteur):
+        df_auteurs = self.db.load_table("auteurs").fillna("")
+        mask = df_auteurs["id_auteur"] == str(id_auteur)
+        if not mask.any():
+            raise ValueError("Auteur introuvable.")
+
+        df_livres = self.db.load_table("livres").fillna("")
+        if not df_livres.empty and (df_livres["id_auteur"] == str(id_auteur)).any():
+            auteur = df_auteurs[mask].iloc[0]
+            nom_complet = self._format_auteur(auteur) or f"ID {id_auteur}"
+            raise ValueError(
+                f"Impossible de supprimer {nom_complet} : des livres sont encore associes a cet auteur."
+            )
+
+        df_auteurs = df_auteurs[~mask]
+        self.db.save_table("auteurs", df_auteurs)
+
     def _resolve_auteur_id(self, auteur_ref):
         auteur_ref = str(auteur_ref).strip()
         df_auteurs = self.db.load_table("auteurs").fillna("")
