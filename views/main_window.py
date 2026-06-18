@@ -145,7 +145,7 @@ class BaseTablePage(BasePage):
         self.layout.addWidget(lbl_title)
         
         self.search_input = QLineEdit()
-        self.search_input.setPlaceholderText("🔍 Rechercher...")
+        self.search_input.setPlaceholderText("Rechercher...")
         self.search_input.textChanged.connect(self.on_search)
         self.layout.addWidget(self.search_input)
         
@@ -211,7 +211,7 @@ class BaseTablePage(BasePage):
 
 class ManageBooksPage(BaseTablePage):
     def __init__(self, main_window):
-        super().__init__(main_window, "📚 Tous les livres")
+        super().__init__(main_window, "Tous les livres")
         self.set_columns([
             ("id_livre", "ID"), ("titre", "Titre"), ("auteur", "Auteur"),
             ("categorie", "Categorie"), ("annee", "Annee"), ("description", "Description"),
@@ -251,14 +251,14 @@ class ManageBooksPage(BaseTablePage):
             
             self.layout.insertWidget(2, self.form_frame)
             
-            btn_add = QPushButton("✨ Ajouter")
+            btn_add = QPushButton("Ajouter")
             btn_add.setObjectName("primaryAction")
             btn_add.clicked.connect(self.on_add)
             
-            btn_update = QPushButton("✏️ Modifier")
+            btn_update = QPushButton("Modifier")
             btn_update.clicked.connect(self.on_update)
             
-            btn_delete = QPushButton("🗑️ Supprimer")
+            btn_delete = QPushButton("Supprimer")
             btn_delete.setObjectName("dangerAction")
             btn_delete.clicked.connect(self.on_delete)
             
@@ -271,7 +271,7 @@ class ManageBooksPage(BaseTablePage):
             self.table.itemSelectionChanged.connect(self.on_selection)
             
         self.action_layout.addStretch()
-        btn_borrow = QPushButton("📤 Emprunter")
+        btn_borrow = QPushButton("Emprunter")
         btn_borrow.clicked.connect(self.on_borrow)
         self.action_layout.addWidget(btn_borrow)
 
@@ -442,7 +442,7 @@ class ManageAuthorsPage(BaseTablePage):
             
             self.layout.insertWidget(2, self.form_frame)
             
-            btn_add = QPushButton("✨ Ajouter")
+            btn_add = QPushButton("Ajouter")
             btn_add.setObjectName("primaryAction")
             btn_add.clicked.connect(self.on_add)
 
@@ -682,7 +682,7 @@ class MainWindow(QMainWindow):
         add_nav("Livres les plus empruntés", ActionTablePage(
             self, "Livres les plus empruntés", self.emprunt_controller.get_livres_plus_empruntes,
             [("id_livre", "ID"), ("titre", "Titre"), ("auteur", "Auteur"), ("nombre_emprunts", "Nb emprunts")],
-            "📤 Emprunter", self.borrow_callback
+            "Emprunter", self.borrow_callback
         ))
         add_nav("Auteurs", ManageAuthorsPage(self))
         
@@ -690,13 +690,13 @@ class MainWindow(QMainWindow):
             self, "Tous les emprunts" if self.is_admin else "Mes emprunts", 
             lambda: self.emprunt_controller.get_livres_empruntes() if self.is_admin else self.emprunt_controller.get_livres_empruntes_pour_compte(self.current_user),
             [("id_livre", "ID"), ("titre", "Titre"), ("auteur", "Auteur"), ("date_emprunt", "Emprunt"), ("date_limite", "Limite"), ("statut", "Statut")],
-            "📥 Retourner", self.return_callback, require_admin=False if not self.is_admin else True
+            "Retourner", self.return_callback, require_admin=False if not self.is_admin else True
         ))
         add_nav("Retards", ActionTablePage(
             self, "Tous les retards" if self.is_admin else "Mes retards",
             lambda: self.emprunt_controller.get_livres_en_retard() if self.is_admin else self.emprunt_controller.get_livres_en_retard_pour_compte(self.current_user),
             [("id_livre", "ID"), ("titre", "Titre"), ("jours_retard", "Jours Retard"), ("statut", "Statut")],
-            "📥 Retourner", self.return_callback, require_admin=False if not self.is_admin else True
+            "Retourner", self.return_callback, require_admin=False if not self.is_admin else True
         ))
         add_nav("Historique personnel", ActionTablePage(
             self, "Historique personnel", lambda: self.emprunt_controller.get_historique_emprunts_pour_compte(self.current_user),
@@ -707,7 +707,7 @@ class MainWindow(QMainWindow):
             add_nav("Mes emprunts admin", ActionTablePage(
                 self, "Mes emprunts admin", lambda: self.emprunt_controller.get_livres_empruntes_pour_compte(self.current_user),
                 [("id_livre", "ID"), ("titre", "Titre"), ("date_emprunt", "Emprunt"), ("date_limite", "Limite"), ("statut", "Statut")],
-                "📥 Retourner", self.return_callback
+                "Retourner", self.return_callback
             ))
             add_nav("Utilisateurs", ActionTablePage(
                 self, "Utilisateurs", self.auth_controller.get_accounts,
