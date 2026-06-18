@@ -1,8 +1,9 @@
 from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
                                QPushButton, QTableWidget, QTableWidgetItem, 
                                QHeaderView, QLineEdit, QMessageBox, QLabel, QFrame, 
-                               QGraphicsDropShadowEffect, QStackedWidget, QComboBox, QScrollArea)
-from PySide6.QtCore import Qt, Signal
+                               QGraphicsDropShadowEffect, QStackedWidget, QComboBox, QScrollArea,
+                               QSizePolicy, QDialog)
+from PySide6.QtCore import Qt, Signal, QTimer
 from PySide6.QtGui import QColor, QGuiApplication
 from controllers.livre_controller import LivreController
 from controllers.emprunt_controller import EmpruntController
@@ -42,37 +43,58 @@ class DashboardPage(BasePage):
 
         self.scroll = QScrollArea()
         self.scroll.setWidgetResizable(True)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
         self.content_widget = QWidget()
         self.grid = QGridLayout(self.content_widget)
-        self.grid.setSpacing(20)
+        self.grid.setContentsMargins(4, 4, 4, 4)
+        self.grid.setHorizontalSpacing(18)
+        self.grid.setVerticalSpacing(18)
+        for column in range(3):
+            self.grid.setColumnStretch(column, 1)
         self.scroll.setWidget(self.content_widget)
         layout.addWidget(self.scroll)
 
     def create_card(self, indicateur, valeur, detail):
         card = QFrame()
         card.setObjectName("card")
+        card.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         card.setGraphicsEffect(create_shadow())
         card_layout = QVBoxLayout(card)
         card_layout.setContentsMargins(20, 20, 20, 20)
+        card_layout.setSpacing(10)
         
         lbl_ind = QLabel(indicateur)
         lbl_ind.setObjectName("statTitle")
+        lbl_ind.setWordWrap(True)
         lbl_val = QLabel(str(valeur))
-        lbl_val.setObjectName("statValue")
+        if isinstance(valeur, str) and len(valeur) > 12:
+            lbl_val.setObjectName("statValueText")
+            lbl_val.setText(self.truncate_text(valeur, 34))
+        else:
+            lbl_val.setObjectName("statValue")
         lbl_val.setAlignment(Qt.AlignCenter)
+        lbl_val.setWordWrap(True)
+        lbl_val.setMinimumWidth(0)
         lbl_det = QLabel(detail)
         lbl_det.setObjectName("statDetail")
         lbl_det.setAlignment(Qt.AlignCenter)
         lbl_det.setWordWrap(True)
+        lbl_det.setMinimumWidth(0)
         
         card_layout.addWidget(lbl_ind)
-        card_layout.addWidget(lbl_val)
+        card_layout.addWidget(lbl_val, 1)
         card_layout.addWidget(lbl_det)
         
-        card.setMinimumHeight(130)
-        card.setMaximumHeight(160)
+        card.setMinimumHeight(150)
+        card.setMaximumHeight(170)
         return card
+
+    def truncate_text(self, text, max_length):
+        text = str(text).strip()
+        if len(text) <= max_length:
+            return text
+        return text[: max_length - 3].rstrip() + "..."
 
     def is_livre_emprunte(self, livre):
         statut = str(livre.get("disponibilite", livre.get("statut", ""))).lower()
@@ -209,14 +231,70 @@ class BaseTablePage(BasePage):
         ]
         self.populate_table(filtered)
 
+class BookDetailsDialog(QDialog):
+    def __init__(self, livre, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Infos du livre")
+        self.setMinimumSize(520, 420)
+
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setSpacing(14)
+
+        title = QLabel(str(livre.get("titre", "Livre")).strip() or "Livre")
+        title.setObjectName("pageTitle")
+        title.setWordWrap(True)
+        layout.addWidget(title)
+
+        details_frame = QFrame()
+        details_frame.setObjectName("formContainer")
+        details_layout = QGridLayout(details_frame)
+        details_layout.setContentsMargins(15, 15, 15, 15)
+        details_layout.setHorizontalSpacing(14)
+        details_layout.setVerticalSpacing(10)
+
+        rows = [
+            ("Auteur", livre.get("auteur", "")),
+            ("Categorie", livre.get("categorie", "")),
+            ("Annee", livre.get("annee", "")),
+            ("Statut", livre.get("statut", livre.get("disponibilite", ""))),
+            ("Description", livre.get("description", "")),
+            ("Mots cles", livre.get("mots_cles", "")),
+        ]
+
+        for row, (label_text, value) in enumerate(rows):
+            label = QLabel(f"{label_text} :")
+            label.setObjectName("detailFieldLabel")
+            label.setAlignment(Qt.AlignTop | Qt.AlignLeft)
+
+            value_label = QLabel(str(value).strip() or "-")
+            value_label.setObjectName("detailFieldValue")
+            value_label.setWordWrap(True)
+            value_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+            value_label.setMinimumWidth(0)
+
+            details_layout.addWidget(label, row, 0)
+            details_layout.addWidget(value_label, row, 1)
+
+        details_layout.setColumnStretch(1, 1)
+        layout.addWidget(details_frame, 1)
+
+        close_layout = QHBoxLayout()
+        close_layout.addStretch()
+        close_btn = QPushButton("Fermer")
+        close_btn.clicked.connect(self.accept)
+        close_layout.addWidget(close_btn)
+        layout.addLayout(close_layout)
+
 class ManageBooksPage(BaseTablePage):
     def __init__(self, main_window):
         super().__init__(main_window, "Tous les livres")
         self.set_columns([
             ("id_livre", "ID"), ("titre", "Titre"), ("auteur", "Auteur"),
             ("categorie", "Categorie"), ("annee", "Annee"), ("description", "Description"),
-            ("mots_cles", "Mots cles"), ("statut", "Statut")
+            ("mots_cles", "Mots cles"), ("statut", "Statut"), ("_details", "Fiche livre")
         ])
+        self.table.horizontalHeader().setSectionResizeMode(len(self.columns) - 1, QHeaderView.ResizeToContents)
         
         if self.is_admin:
             self.form_frame = QFrame()
@@ -274,6 +352,27 @@ class ManageBooksPage(BaseTablePage):
         btn_borrow = QPushButton("Emprunter")
         btn_borrow.clicked.connect(self.on_borrow)
         self.action_layout.addWidget(btn_borrow)
+
+    def populate_table(self, data):
+        super().populate_table(data)
+        details_column = len(self.columns) - 1
+        for row_idx, row_data in enumerate(data):
+            btn = QPushButton("Voir details")
+            btn.setObjectName("bookInfoAction")
+            btn.setToolTip("Afficher la fiche complete de ce livre")
+            btn.setFixedSize(104, 28)
+            btn.clicked.connect(lambda _, livre=row_data: self.show_book_details(livre))
+
+            cell = QWidget()
+            cell_layout = QHBoxLayout(cell)
+            cell_layout.setContentsMargins(4, 2, 4, 2)
+            cell_layout.addWidget(btn)
+            cell_layout.setAlignment(Qt.AlignCenter)
+            self.table.setCellWidget(row_idx, details_column, cell)
+
+    def show_book_details(self, livre):
+        dialog = BookDetailsDialog(livre, self)
+        dialog.exec()
 
     def refresh(self):
         if self.is_admin:
@@ -540,6 +639,8 @@ class MainWindow(QMainWindow):
             first_widget = self.stacked_widget.widget(0)
             self.switch_tab(first_widget, self.nav_buttons[0])
 
+        QTimer.singleShot(0, self.show_overdue_alert_if_needed)
+
     def set_initial_size(self):
         screen = self.screen() or QGuiApplication.primaryScreen()
         if not screen:
@@ -569,6 +670,45 @@ class MainWindow(QMainWindow):
             self.current_user["display_name"] = display_name
 
         self.session_info_label.setText(f"{display_name} ({self.current_user['role']})")
+
+    def show_overdue_alert_if_needed(self):
+        try:
+            if self.is_admin:
+                retards = self.emprunt_controller.get_livres_en_retard()
+            else:
+                retards = self.emprunt_controller.get_livres_en_retard_pour_compte(self.current_user)
+        except Exception:
+            return
+
+        if not retards:
+            return
+
+        lines = []
+        for livre in retards[:5]:
+            titre = str(livre.get("titre", "")).strip() or "Livre"
+            jours_retard = str(livre.get("jours_retard", "")).strip() or "0"
+            date_limite = str(livre.get("date_limite", "")).strip()
+            emprunteur = str(livre.get("emprunteur", "")).strip()
+
+            detail = f"{titre} : {jours_retard} jour(s) de retard"
+            if date_limite:
+                detail += f", limite {date_limite}"
+            if self.is_admin and emprunteur:
+                detail += f", emprunteur {emprunteur}"
+            lines.append(f"- {detail}")
+
+        if len(retards) > len(lines):
+            lines.append(f"- Et {len(retards) - len(lines)} autre(s) emprunt(s) en retard.")
+
+        message = "La date limite est depassee pour certains emprunts."
+        if not self.is_admin:
+            message = "La date limite est depassee pour certains de vos emprunts."
+
+        QMessageBox.warning(
+            self,
+            "Date limite depassee",
+            message + "\n\n" + "\n".join(lines),
+        )
 
     def setup_ui(self):
         central_widget = QWidget()
@@ -686,16 +826,30 @@ class MainWindow(QMainWindow):
         ))
         add_nav("Auteurs", ManageAuthorsPage(self))
         
+        emprunts_columns = [
+            ("id_livre", "ID"), ("titre", "Titre"), ("auteur", "Auteur"),
+            ("date_emprunt", "Emprunt"), ("date_limite", "Limite"), ("statut", "Statut")
+        ]
+        if self.is_admin:
+            emprunts_columns.insert(3, ("emprunteur", "Emprunteur"))
+
         add_nav("Emprunts", ActionTablePage(
             self, "Tous les emprunts" if self.is_admin else "Mes emprunts", 
             lambda: self.emprunt_controller.get_livres_empruntes() if self.is_admin else self.emprunt_controller.get_livres_empruntes_pour_compte(self.current_user),
-            [("id_livre", "ID"), ("titre", "Titre"), ("auteur", "Auteur"), ("date_emprunt", "Emprunt"), ("date_limite", "Limite"), ("statut", "Statut")],
+            emprunts_columns,
             "Retourner", self.return_callback, require_admin=False if not self.is_admin else True
         ))
+
+        retards_columns = [
+            ("id_livre", "ID"), ("titre", "Titre"), ("jours_retard", "Jours Retard"), ("statut", "Statut")
+        ]
+        if self.is_admin:
+            retards_columns.insert(2, ("emprunteur", "Emprunteur"))
+
         add_nav("Retards", ActionTablePage(
             self, "Tous les retards" if self.is_admin else "Mes retards",
             lambda: self.emprunt_controller.get_livres_en_retard() if self.is_admin else self.emprunt_controller.get_livres_en_retard_pour_compte(self.current_user),
-            [("id_livre", "ID"), ("titre", "Titre"), ("jours_retard", "Jours Retard"), ("statut", "Statut")],
+            retards_columns,
             "Retourner", self.return_callback, require_admin=False if not self.is_admin else True
         ))
         add_nav("Historique personnel", ActionTablePage(

@@ -147,6 +147,12 @@ QLabel#statValue {
     font-weight: 900;
 }
 
+QLabel#statValueText {
+    color: #4F46E5;
+    font-size: 18px;
+    font-weight: 900;
+}
+
 QLabel#statDetail {
     color: #9CA3AF;
     font-size: 12px;
@@ -200,6 +206,39 @@ QPushButton#dangerAction {
     border: none;
 }
 QPushButton#dangerAction:hover { background-color: #DC2626; }
+
+QPushButton#smallAction {
+    padding: 3px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 5px;
+}
+
+QPushButton#bookInfoAction {
+    background-color: #EEF2FF;
+    color: #3730A3;
+    border: 1px solid #818CF8;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 800;
+    border-radius: 5px;
+}
+
+QPushButton#bookInfoAction:hover {
+    background-color: #E0E7FF;
+    border: 1px solid #4F46E5;
+}
+
+QLabel#detailFieldLabel {
+    color: #6B7280;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+QLabel#detailFieldValue {
+    color: #111827;
+    font-size: 14px;
+}
 
 /* Table Widget */
 QTableWidget {
