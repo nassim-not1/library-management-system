@@ -28,6 +28,7 @@ class ProfilePage(QWidget):
 
         # Zone de défilement pour tout le contenu
         scroll_area = QScrollArea()
+        scroll_area.setObjectName("contentScroll")
         scroll_area.setWidgetResizable(True)
         scroll_area.setFrameShape(QFrame.NoFrame)
         scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -35,8 +36,8 @@ class ProfilePage(QWidget):
         # Widget contenu dans la scroll area
         content_widget = QWidget()
         layout = QVBoxLayout(content_widget)
-        layout.setContentsMargins(40, 40, 40, 40)
-        layout.setSpacing(30)
+        layout.setContentsMargins(32, 28, 32, 28)
+        layout.setSpacing(20)
         layout.setAlignment(Qt.AlignTop)
 
         scroll_area.setWidget(content_widget)
@@ -50,25 +51,31 @@ class ProfilePage(QWidget):
         profile_frame = QFrame()
         profile_frame.setObjectName("formContainer")
         profile_layout = QVBoxLayout(profile_frame)
-        profile_layout.setSpacing(20)
+        profile_layout.setContentsMargins(22, 22, 22, 22)
+        profile_layout.setSpacing(18)
 
         lbl_section1 = QLabel("Informations Personnelles")
-        lbl_section1.setStyleSheet("font-weight: bold; font-size: 18px; color: #1E293B; margin-bottom: 10px;")
+        lbl_section1.setObjectName("sectionTitle")
         profile_layout.addWidget(lbl_section1)
 
         form1 = QFormLayout()
-        form1.setSpacing(15)
+        form1.setSpacing(14)
+        form1.setLabelAlignment(Qt.AlignLeft)
         
         self.username_input = QLineEdit()
+        self.username_input.setClearButtonEnabled(True)
         self.username_input.setPlaceholderText("Nom d'utilisateur (identifiant de connexion)")
 
         self.nom_input = QLineEdit()
+        self.nom_input.setClearButtonEnabled(True)
         self.nom_input.setPlaceholderText("Nom (obligatoire)")
         
         self.prenom_input = QLineEdit()
+        self.prenom_input.setClearButtonEnabled(True)
         self.prenom_input.setPlaceholderText("Prénom")
 
         self.email_input = QLineEdit()
+        self.email_input.setClearButtonEnabled(True)
         self.email_input.setPlaceholderText("Adresse Email")
 
         form1.addRow("Nom d'utilisateur :", self.username_input)
@@ -79,7 +86,7 @@ class ProfilePage(QWidget):
         
         btn_save_profile = QPushButton("Enregistrer les modifications")
         btn_save_profile.setObjectName("primaryAction")
-        btn_save_profile.setFixedWidth(250)
+        btn_save_profile.setMinimumWidth(250)
         btn_save_profile.clicked.connect(self.save_profile)
         profile_layout.addWidget(btn_save_profile, alignment=Qt.AlignRight)
 
@@ -89,24 +96,29 @@ class ProfilePage(QWidget):
         security_frame = QFrame()
         security_frame.setObjectName("formContainer")
         security_layout = QVBoxLayout(security_frame)
-        security_layout.setSpacing(20)
+        security_layout.setContentsMargins(22, 22, 22, 22)
+        security_layout.setSpacing(18)
 
         lbl_section2 = QLabel("Sécurité")
-        lbl_section2.setStyleSheet("font-weight: bold; font-size: 18px; color: #1E293B; margin-bottom: 10px;")
+        lbl_section2.setObjectName("sectionTitle")
         security_layout.addWidget(lbl_section2)
 
         form2 = QFormLayout()
-        form2.setSpacing(15)
+        form2.setSpacing(14)
+        form2.setLabelAlignment(Qt.AlignLeft)
 
         self.old_pwd_input = QLineEdit()
+        self.old_pwd_input.setClearButtonEnabled(True)
         self.old_pwd_input.setPlaceholderText("Mot de passe actuel")
         self.old_pwd_input.setEchoMode(QLineEdit.Password)
 
         self.new_pwd_input = QLineEdit()
+        self.new_pwd_input.setClearButtonEnabled(True)
         self.new_pwd_input.setPlaceholderText("Nouveau mot de passe")
         self.new_pwd_input.setEchoMode(QLineEdit.Password)
 
         self.confirm_pwd_input = QLineEdit()
+        self.confirm_pwd_input.setClearButtonEnabled(True)
         self.confirm_pwd_input.setPlaceholderText("Confirmer le nouveau mot de passe")
         self.confirm_pwd_input.setEchoMode(QLineEdit.Password)
 
@@ -117,7 +129,7 @@ class ProfilePage(QWidget):
 
         btn_save_pwd = QPushButton("Modifier le mot de passe")
         btn_save_pwd.setObjectName("dangerAction") 
-        btn_save_pwd.setFixedWidth(250)
+        btn_save_pwd.setMinimumWidth(250)
         btn_save_pwd.clicked.connect(self.save_password)
         security_layout.addWidget(btn_save_pwd, alignment=Qt.AlignRight)
 

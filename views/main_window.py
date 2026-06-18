@@ -2,8 +2,8 @@ from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, Q
                                QPushButton, QTableWidget, QTableWidgetItem, 
                                QHeaderView, QLineEdit, QMessageBox, QLabel, QFrame, 
                                QGraphicsDropShadowEffect, QStackedWidget, QComboBox, QScrollArea,
-                               QSizePolicy, QDialog)
-from PySide6.QtCore import Qt, Signal, QTimer
+                               QSizePolicy, QDialog, QGraphicsOpacityEffect)
+from PySide6.QtCore import Qt, Signal, QTimer, QPropertyAnimation, QEasingCurve
 from PySide6.QtGui import QColor, QGuiApplication
 from controllers.livre_controller import LivreController
 from controllers.emprunt_controller import EmpruntController
@@ -13,9 +13,9 @@ from views.profile_page import ProfilePage
 
 def create_shadow():
     shadow = QGraphicsDropShadowEffect()
-    shadow.setBlurRadius(15)
-    shadow.setColor(QColor(0, 0, 0, 30))
-    shadow.setOffset(0, 4)
+    shadow.setBlurRadius(24)
+    shadow.setColor(QColor(15, 23, 42, 28))
+    shadow.setOffset(0, 8)
     return shadow
 
 class BasePage(QWidget):
@@ -35,16 +35,17 @@ class DashboardPage(BasePage):
     def __init__(self, main_window):
         super().__init__(main_window)
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setContentsMargins(28, 26, 28, 24)
+        layout.setSpacing(18)
         
         lbl_title = QLabel("Tableau de Bord")
         lbl_title.setObjectName("pageTitle")
         layout.addWidget(lbl_title)
 
         self.scroll = QScrollArea()
+        self.scroll.setObjectName("contentScroll")
         self.scroll.setWidgetResizable(True)
         self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
         self.content_widget = QWidget()
         self.grid = QGridLayout(self.content_widget)
         self.grid.setContentsMargins(4, 4, 4, 4)
@@ -61,7 +62,7 @@ class DashboardPage(BasePage):
         card.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         card.setGraphicsEffect(create_shadow())
         card_layout = QVBoxLayout(card)
-        card_layout.setContentsMargins(20, 20, 20, 20)
+        card_layout.setContentsMargins(22, 20, 22, 20)
         card_layout.setSpacing(10)
         
         lbl_ind = QLabel(indicateur)
@@ -159,15 +160,18 @@ class BaseTablePage(BasePage):
     def __init__(self, main_window, title):
         super().__init__(main_window)
         self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(20, 20, 20, 20)
-        self.layout.setSpacing(15)
+        self.layout.setContentsMargins(28, 26, 28, 24)
+        self.layout.setSpacing(16)
         
         lbl_title = QLabel(title)
         lbl_title.setObjectName("pageTitle")
         self.layout.addWidget(lbl_title)
         
         self.search_input = QLineEdit()
+        self.search_input.setObjectName("searchInput")
         self.search_input.setPlaceholderText("Rechercher...")
+        self.search_input.setMinimumHeight(42)
+        self.search_input.setClearButtonEnabled(True)
         self.search_input.textChanged.connect(self.on_search)
         self.layout.addWidget(self.search_input)
         
@@ -176,13 +180,18 @@ class BaseTablePage(BasePage):
         self.table.setSelectionMode(QTableWidget.SingleSelection)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table.verticalHeader().setVisible(False)
+        self.table.verticalHeader().setDefaultSectionSize(44)
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.table.horizontalHeader().setHighlightSections(False)
         self.table.setAlternatingRowColors(True)
+        self.table.setShowGrid(False)
+        self.table.setWordWrap(False)
         self.table.setGraphicsEffect(create_shadow())
         self.layout.addWidget(self.table)
         
         self.action_layout = QHBoxLayout()
-        self.action_layout.setContentsMargins(0, 5, 10, 10)
+        self.action_layout.setContentsMargins(0, 4, 0, 0)
+        self.action_layout.setSpacing(10)
         self.layout.addLayout(self.action_layout)
         
         self.current_data = []
@@ -248,8 +257,9 @@ class BookDetailsDialog(QDialog):
 
         details_frame = QFrame()
         details_frame.setObjectName("formContainer")
+        details_frame.setGraphicsEffect(create_shadow())
         details_layout = QGridLayout(details_frame)
-        details_layout.setContentsMargins(15, 15, 15, 15)
+        details_layout.setContentsMargins(20, 20, 20, 20)
         details_layout.setHorizontalSpacing(14)
         details_layout.setVerticalSpacing(10)
 
@@ -300,20 +310,26 @@ class ManageBooksPage(BaseTablePage):
             self.form_frame = QFrame()
             self.form_frame.setObjectName("formContainer")
             form_layout = QVBoxLayout(self.form_frame)
-            form_layout.setContentsMargins(15, 15, 15, 15)
+            form_layout.setContentsMargins(18, 18, 18, 18)
+            form_layout.setSpacing(12)
             
             inputs_layout = QHBoxLayout()
             
             self.inp_titre = QLineEdit()
+            self.inp_titre.setClearButtonEnabled(True)
             self.inp_titre.setPlaceholderText("Titre")
             self.inp_auteur = QComboBox()
             self.inp_categorie = QLineEdit()
+            self.inp_categorie.setClearButtonEnabled(True)
             self.inp_categorie.setPlaceholderText("Catégorie")
             self.inp_annee = QLineEdit()
+            self.inp_annee.setClearButtonEnabled(True)
             self.inp_annee.setPlaceholderText("Année")
             self.inp_description = QLineEdit()
+            self.inp_description.setClearButtonEnabled(True)
             self.inp_description.setPlaceholderText("Description")
             self.inp_mots_cles = QLineEdit()
+            self.inp_mots_cles.setClearButtonEnabled(True)
             self.inp_mots_cles.setPlaceholderText("Mots cles")
             
             inputs_layout.addWidget(self.inp_titre)
@@ -350,6 +366,7 @@ class ManageBooksPage(BaseTablePage):
             
         self.action_layout.addStretch()
         btn_borrow = QPushButton("Emprunter")
+        btn_borrow.setObjectName("primaryAction")
         btn_borrow.clicked.connect(self.on_borrow)
         self.action_layout.addWidget(btn_borrow)
 
@@ -460,7 +477,8 @@ class RecommendationsPage(BaseTablePage):
         selector_frame = QFrame()
         selector_frame.setObjectName("formContainer")
         selector_layout = QHBoxLayout(selector_frame)
-        selector_layout.setContentsMargins(15, 15, 15, 15)
+        selector_layout.setContentsMargins(18, 18, 18, 18)
+        selector_layout.setSpacing(12)
 
         self.book_combo = QComboBox()
         self.book_combo.setMinimumWidth(320)
@@ -524,14 +542,18 @@ class ManageAuthorsPage(BaseTablePage):
             self.form_frame = QFrame()
             self.form_frame.setObjectName("formContainer")
             form_layout = QVBoxLayout(self.form_frame)
-            form_layout.setContentsMargins(15, 15, 15, 15)
+            form_layout.setContentsMargins(18, 18, 18, 18)
+            form_layout.setSpacing(12)
             
             inputs_layout = QHBoxLayout()
             self.inp_nom = QLineEdit()
+            self.inp_nom.setClearButtonEnabled(True)
             self.inp_nom.setPlaceholderText("Nom")
             self.inp_prenom = QLineEdit()
+            self.inp_prenom.setClearButtonEnabled(True)
             self.inp_prenom.setPlaceholderText("Prénom")
             self.inp_nationalite = QLineEdit()
+            self.inp_nationalite.setClearButtonEnabled(True)
             self.inp_nationalite.setPlaceholderText("Nationalité")
             
             inputs_layout.addWidget(self.inp_nom)
@@ -613,6 +635,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self, current_user=None):
         super().__init__()
+        self.setMinimumSize(980, 620)
         self.setWindowTitle("Gestion de Bibliothèque - Premium Edition")
         self.set_initial_size()
         self.center_on_screen()
@@ -720,10 +743,10 @@ class MainWindow(QMainWindow):
         # Sidebar
         sidebar = QFrame()
         sidebar.setObjectName("sidebar")
-        sidebar.setFixedWidth(270)
+        sidebar.setFixedWidth(288)
         sidebar_layout = QVBoxLayout(sidebar)
-        sidebar_layout.setContentsMargins(14, 18, 14, 14)
-        sidebar_layout.setSpacing(8)
+        sidebar_layout.setContentsMargins(18, 22, 18, 18)
+        sidebar_layout.setSpacing(10)
         
         app_title = QLabel("BIBLIOTHÈQUE")
         app_title.setObjectName("sidebarTitle")
@@ -742,7 +765,7 @@ class MainWindow(QMainWindow):
         nav_container.setObjectName("navContainer")
         nav_layout = QVBoxLayout(nav_container)
         nav_layout.setContentsMargins(0, 0, 0, 0)
-        nav_layout.setSpacing(6)
+        nav_layout.setSpacing(7)
         nav_layout.setAlignment(Qt.AlignTop)
         
         nav_scroll = QScrollArea()
@@ -750,34 +773,8 @@ class MainWindow(QMainWindow):
         nav_scroll.setWidgetResizable(True)
         nav_scroll.setWidget(nav_container)
         nav_scroll.setFrameShape(QFrame.NoFrame)
-        nav_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        nav_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         nav_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        nav_scroll.setStyleSheet("""
-            QScrollArea { background: transparent; border: none; }
-            QWidget#navContainer { background: transparent; }
-            QScrollBar:vertical {
-                width: 5px;
-                background: #1F4B57;
-                border: none;
-                border-radius: 2px;
-                margin: 0px;
-            }
-            QScrollBar::handle:vertical {
-                background: #8FB6C1;
-                border-radius: 2px;
-                min-height: 36px;
-            }
-            QScrollBar::add-line:vertical,
-            QScrollBar::sub-line:vertical {
-                height: 0px;
-                background: transparent;
-                border: none;
-            }
-            QScrollBar::add-page:vertical,
-            QScrollBar::sub-page:vertical {
-                background: transparent;
-            }
-        """)
         # La scroll area prend tout l'espace disponible
         sidebar_layout.addWidget(nav_scroll, 1)
 
@@ -790,7 +787,7 @@ class MainWindow(QMainWindow):
             btn = QPushButton(text)
             btn.setProperty("class", "sidebarButton")
             btn.setCursor(Qt.PointingHandCursor)
-            btn.setMinimumHeight(40)
+            btn.setMinimumHeight(44)
             btn.clicked.connect(lambda _, w=page_widget, b=btn: self.switch_tab(w, b))
             nav_layout.addWidget(btn)
             self.nav_buttons.append(btn)
@@ -895,6 +892,20 @@ class MainWindow(QMainWindow):
         
         if hasattr(widget, "refresh"):
             widget.refresh()
+        self.animate_page_transition(widget)
+
+    def animate_page_transition(self, widget):
+        effect = QGraphicsOpacityEffect(widget)
+        widget.setGraphicsEffect(effect)
+
+        animation = QPropertyAnimation(effect, b"opacity", self)
+        animation.setDuration(180)
+        animation.setStartValue(0.0)
+        animation.setEndValue(1.0)
+        animation.setEasingCurve(QEasingCurve.OutCubic)
+        animation.finished.connect(lambda: widget.setGraphicsEffect(None))
+        self._page_animation = animation
+        animation.start()
 
     def borrow_callback(self, book_id):
         try:

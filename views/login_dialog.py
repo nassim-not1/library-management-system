@@ -19,27 +19,29 @@ class LoginDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Accueil")
-        self.setFixedSize(420, 420)
+        self.setMinimumSize(420, 430)
+        self.resize(460, 460)
         self.auth_controller = AuthController()
         self.authenticated_user = None
         self.setup_ui()
 
     def create_shadow(self):
         shadow = QGraphicsDropShadowEffect()
-        shadow.setBlurRadius(15)
-        shadow.setColor(QColor(0, 0, 0, 80))
-        shadow.setOffset(0, 3)
+        shadow.setBlurRadius(30)
+        shadow.setColor(QColor(15, 23, 42, 35))
+        shadow.setOffset(0, 10)
         return shadow
 
     def setup_ui(self):
         main_layout = QVBoxLayout(self)
-        main_layout.setContentsMargins(20, 20, 20, 20)
+        main_layout.setContentsMargins(28, 28, 28, 28)
 
         form_frame = QFrame()
-        form_frame.setObjectName("formContainer")
+        form_frame.setObjectName("authCard")
         form_frame.setGraphicsEffect(self.create_shadow())
         form_layout = QVBoxLayout(form_frame)
-        form_layout.setSpacing(15)
+        form_layout.setContentsMargins(26, 24, 26, 24)
+        form_layout.setSpacing(16)
 
         title_label = QLabel("Accueil")
         title_label.setObjectName("mainTitle")
@@ -48,11 +50,13 @@ class LoginDialog(QDialog):
 
         self.username_input = QLineEdit()
         self.username_input.setPlaceholderText("Nom d'utilisateur")
+        self.username_input.setClearButtonEnabled(True)
         form_layout.addWidget(self.username_input)
 
         self.password_input = QLineEdit()
         self.password_input.setPlaceholderText("Mot de passe")
         self.password_input.setEchoMode(QLineEdit.Password)
+        self.password_input.setClearButtonEnabled(True)
         self.password_input.returnPressed.connect(self.login)
         self.password_input.textChanged.connect(self.clear_error)
         form_layout.addWidget(self.password_input)
@@ -66,11 +70,14 @@ class LoginDialog(QDialog):
         form_layout.addStretch()
 
         btn_layout = QHBoxLayout()
+        btn_layout.setSpacing(10)
         self.btn_quit = QPushButton("Annuler")
+        self.btn_quit.setMinimumHeight(40)
         self.btn_quit.clicked.connect(self.reject)
 
         self.btn_login = QPushButton("Se connecter")
         self.btn_login.setObjectName("primaryAction")
+        self.btn_login.setMinimumHeight(40)
         self.btn_login.clicked.connect(self.login)
 
         btn_layout.addWidget(self.btn_quit)
@@ -80,7 +87,7 @@ class LoginDialog(QDialog):
         form_layout.addSpacing(10)
         
         self.btn_register = QPushButton("Pas encore de compte ? Créer un compte")
-        self.btn_register.setStyleSheet("QPushButton { background: transparent; color: #4F46E5; border: none; font-weight: 600; font-size: 13px; } QPushButton:hover { text-decoration: underline; background: transparent; border: none; }")
+        self.btn_register.setObjectName("linkButton")
         self.btn_register.setCursor(Qt.PointingHandCursor)
         self.btn_register.clicked.connect(self.open_register)
         form_layout.addWidget(self.btn_register, alignment=Qt.AlignCenter)

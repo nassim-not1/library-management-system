@@ -5,6 +5,7 @@ from views.login_dialog import LoginDialog
 
 def main():
     app = QApplication(sys.argv)
+    app.setStyle("Fusion")
     
     from views.style import LIGHT_THEME_QSS
     app.setStyleSheet(LIGHT_THEME_QSS)
