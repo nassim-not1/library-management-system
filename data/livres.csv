@@ -1,19 +1,41 @@
 id_livre,titre,categorie,disponibilite,id_auteur,annee,description,mots_cles
-1,L Etranger,Roman,Disponible,1,1942,Histoire d un homme solitaire confronte a l absurde et au jugement social,absurde solitude justice roman philosophique algerie
-2,Les Miserables,Roman,Emprunté,2,1862,Fresque sociale sur la misere la redemption et la justice dans la France du dix neuvieme siecle,justice misere redemption societe historique france
-3,Harry Potter 1,Fantastique,Disponible,3,1997,Un jeune sorcier decouvre une ecole de magie et affronte les secrets de son passe,magie sorcier ecole aventure amitie fantasy
-4,1984,Science-fiction,Emprunté,4,1949,Une societe totalitaire surveille les citoyens et controle la pensee par la peur,totalitarisme surveillance dystopie politique liberte
-5,Le Meurtre de Roger Ackroyd,Policier,Disponible,5,1926,Une enquete ingenieuse menee autour d un meurtre dans un village anglais,policier enquete meurtre suspense detective village
-6,La Peste,Roman,Disponible,1,1947,Une ville frappee par une epidemie revele le courage la peur et la solidarite,epidemie solidarite absurde maladie courage roman philosophique
-7,Harry Potter 2,Fantastique,Disponible,3,1998,Le jeune sorcier retourne a l ecole et affronte une chambre secrete pleine de dangers,magie sorcier ecole mystere creature fantasy
-8,Le Seigneur des Anneaux,Fantastique,Disponible,6,1954,Une quete epique oppose des peuples libres a une force obscure qui menace le monde,quete anneau fantasy aventure magie guerre
-9,Le Hobbit,Fantastique,Disponible,6,1937,Un hobbit tranquille part vers une montagne gardee par un dragon avec des compagnons nains,dragon quete aventure fantasy magie voyage
-10,Fondation,Science-fiction,Disponible,7,1951,Des savants tentent de sauver la civilisation grace a la psychohistoire et a la prevision,science fiction empire futur civilisation psychohistoire
-11,Les Robots,Science-fiction,Disponible,7,1950,Des recits explorent les robots l intelligence artificielle et les lois de la robotique,robots intelligence artificielle technologie futur ethique
-12,Vingt mille lieues sous les mers,Aventure,Disponible,8,1870,Une expedition sous marine explore les oceans a bord du Nautilus du capitaine Nemo,mer sous marin exploration aventure science voyage
-13,Le Tour du monde en 80 jours,Aventure,Disponible,8,1872,Un pari audacieux entraine un voyage rapide autour du monde rempli d obstacles,voyage aventure pari monde transport exploration
-14,Sherlock Holmes Etude en rouge,Policier,Disponible,9,1887,Un detective brillant utilise la deduction pour resoudre une affaire criminelle complexe,policier detective deduction enquete crime londres
-15,Le Chien des Baskerville,Policier,Disponible,9,1902,Sherlock Holmes enquete sur une legende familiale et une menace dans les landes,policier detective mystere deduction suspense legende
-16,Les Trois Mousquetaires,Aventure,Disponible,10,1844,Un jeune homme rejoint des mousquetaires dans une histoire de duel d honneur et de complots,duel honneur aventure historique amitie complot
-17,Le Petit Prince,Conte,Disponible,11,1943,Un voyage poetique parle d amitie de responsabilite et du regard de l enfance,conte enfance amitie voyage philosophie poesie
-18,Frankenstein,Science-fiction,Disponible,12,1818,Un savant cree une creature et affronte les consequences morales de son ambition,science fiction creation monstre ethique solitude savant
+1,L Etranger,Roman,Disponible,1,1942,Histoire d un homme confronte a l absurde et au jugement social,absurde solitude justice roman philosophique algerie
+2,La Peste,Roman,Disponible,1,1947,Une ville frappee par une epidemie revele la peur et la solidarite,epidemie solidarite courage maladie roman philosophique
+3,Les Miserables,Roman historique,Disponible,2,1862,Fresque sociale sur la misere la justice et la redemption,justice misere redemption societe france classique
+4,1984,Science-fiction,Emprunté,4,1949,Une societe totalitaire surveille les citoyens et controle la pensee,dystopie surveillance totalitarisme politique liberte
+5,La Ferme des animaux,Satire,Disponible,4,1945,Fable politique sur le pouvoir la manipulation et la revolution,politique satire pouvoir revolution allegorie
+6,Harry Potter a l ecole des sorciers,Fantastique,Disponible,3,1997,Un jeune sorcier decouvre une ecole de magie et son destin,magie sorcier ecole aventure amitie fantasy
+7,Harry Potter et la chambre des secrets,Fantastique,Emprunté,3,1998,Le jeune sorcier affronte une chambre secrete pleine de dangers,magie sorcier mystere creature ecole fantasy
+8,Le Seigneur des anneaux,Fantastique,Disponible,6,1954,Une quete epique pour detruire un anneau de pouvoir,fantasy aventure quete anneau guerre amitie
+9,Le Hobbit,Fantastique,Disponible,6,1937,Bilbo part dans une aventure avec des nains et un dragon,fantasy dragon aventure voyage tresor
+10,Le Meurtre de Roger Ackroyd,Policier,Disponible,5,1926,Une enquete ingenieuse autour d un meurtre dans un village anglais,policier enquete meurtre suspense detective
+11,Dix petits negres,Policier,Disponible,5,1939,Dix personnes isolees sur une ile sont accusees de crimes,policier mystere ile crime suspense
+12,Le Tour du monde en 80 jours,Aventure,Disponible,8,1872,Un voyage autour du monde plein de defis et de surprises,aventure voyage monde defi classique
+13,Vingt mille lieues sous les mers,Science-fiction,Disponible,8,1870,Une exploration sous marine a bord du Nautilus,sous marin exploration ocean science fiction aventure
+14,Le Petit Prince,Conte philosophique,Disponible,9,1943,Un conte poetique sur l amitie l enfance et le sens de la vie,conte amitie enfance philosophie voyage
+15,Fondation,Science-fiction,Emprunté,7,1951,Une civilisation tente de preserver la connaissance face au declin galactique,science fiction galaxie empire psychohistoire avenir
+16,Les Robots,Science-fiction,Disponible,7,1950,Des nouvelles sur les robots et les lois de la robotique,robots intelligence artificielle lois robotique futur
+17,Crime et Chatiment,Roman psychologique,Disponible,10,1866,Un etudiant commet un crime et affronte sa conscience,crime culpabilite psychologie morale classique
+18,Orgueil et Prejuges,Roman,Disponible,11,1813,Une histoire d amour et de classes sociales en Angleterre,amour societe mariage classe roman classique
+19,Frankenstein,Science-fiction,Disponible,12,1818,Un savant cree une creature et affronte les consequences,science creation monstre ethique solitude
+20,Da Vinci Code,Thriller,Disponible,13,2003,Une enquete autour de symboles religieux et artistiques,thriller enquete secret symbole religion
+21,Clean Code,Informatique,Emprunté,16,2008,Principes pour ecrire un code propre lisible et maintenable,programmation code propre qualite logiciel refactoring
+22,Python Crash Course,Informatique,Disponible,17,2015,Introduction pratique a Python avec projets et exercices,python programmation debutant pratique projets
+23,Artificial Intelligence A Modern Approach,Intelligence artificielle,Disponible,15,2020,Reference generale sur les agents intelligents la recherche et l apprentissage,intelligence artificielle agents recherche apprentissage algorithmes
+24,Deep Learning,Intelligence artificielle,Disponible,18,2016,Livre de reference sur les reseaux de neurones et l apprentissage profond,deep learning reseaux neuronaux IA apprentissage
+25,Data Science from Scratch,Data Science,Disponible,20,2019,Introduction aux bases mathematiques et pratiques de la data science,data science statistiques python donnees machine learning
+26,Hands On Machine Learning,Machine Learning,Emprunté,19,2022,Guide pratique du machine learning avec Python et Scikit Learn,machine learning scikit learn python tensorflow pratique
+27,Sapiens,Histoire,Disponible,14,2011,Une breve histoire de l humanite et de son evolution,histoire humanite evolution societe culture
+28,Homo Deus,Histoire,Disponible,14,2015,Reflexion sur l avenir de l humanite la technologie et le pouvoir,avenir technologie humanite pouvoir IA
+29,Les Contemplations,Poesie,Disponible,2,1856,Recueil poetique sur l amour la memoire et la douleur,poesie amour memoire douleur romantisme
+30,Notre Dame de Paris,Roman historique,Disponible,2,1831,Roman historique autour de la cathedrale et de personnages tragiques,histoire paris amour tragedie classique
+31,Rendez vous avec Rama,Science-fiction,Disponible,7,1973,Exploration d un mysterieux vaisseau spatial alien,science fiction espace alien exploration mystere
+32,Le Cycle des Robots,Science-fiction,Emprunté,7,1982,Recueil autour de robots intelligents et de dilemmes humains,robots IA futur ethique technologie
+33,Le Silmarillion,Fantastique,Disponible,6,1977,Recits mythologiques du monde de la Terre du Milieu,fantasy mythologie elfes monde epique
+34,Mort sur le Nil,Policier,Disponible,5,1937,Hercule Poirot enquete sur un meurtre pendant une croisiere,policier poirot enquete meurtre croisiere
+35,Voyage au centre de la Terre,Aventure,Disponible,8,1864,Une expedition scientifique vers les profondeurs de la Terre,aventure science exploration voyage geologie
+36,Les Freres Karamazov,Roman philosophique,Emprunté,10,1880,Roman sur la famille la foi la liberte et la responsabilite,philosophie famille morale foi psychologie
+37,Emma,Roman,Disponible,11,1815,Une jeune femme tente d organiser les relations amoureuses autour d elle,amour societe mariage humour classique
+38,Anges et Demons,Thriller,Disponible,13,2000,Une enquete melant science religion et complot,thriller science religion complot suspense
+39,Programmation Python avancee,Informatique,Disponible,17,2021,Concepts avances de Python pour structurer des applications,python avance classes fichiers projets programmation
+40,Introduction au Machine Learning,Machine Learning,Disponible,19,2021,Cours simple sur regression classification evaluation et modeles,machine learning regression classification evaluation donnees

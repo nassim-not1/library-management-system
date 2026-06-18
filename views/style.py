@@ -55,11 +55,17 @@ QLabel#sessionLabel {
 }
 
 QLabel#sidebarSectionLabel {
-    color: #8FB6C1;
+    color: #BEE5EA;
     font-size: 11px;
     font-weight: 800;
-    text-transform: uppercase;
-    padding: 8px 8px 3px 8px;
+    padding: 8px 8px 5px 8px;
+    letter-spacing: 1px;
+}
+
+QFrame#sidebarSectionDivider {
+    background-color: #1F4B57;
+    border: none;
+    margin: 2px 8px 0px 8px;
 }
 
 QScrollArea#sidebarScroll {

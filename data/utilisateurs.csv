@@ -1,5 +1,9 @@
 id_utilisateur,nom,prenom,email
-1,admin,,
-2,user,,
-3,sara,,
-4,biblio,,
+1,Admin,Bibliotheque,admin@bibliotheque.local
+2,Utilisateur,Test,user@bibliotheque.local
+3,Bennani,Sara,sara@example.com
+4,El Amrani,Yassine,yassine@example.com
+5,Karimi,Meryem,meryem@example.com
+6,Alaoui,Omar,omar@example.com
+7,Fassi,Khadija,khadija@example.com
+8,Admin,Biblio,biblio@bibliotheque.local

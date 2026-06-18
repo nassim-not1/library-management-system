@@ -610,12 +610,33 @@ class MainWindow(QMainWindow):
         nav_scroll.setWidgetResizable(True)
         nav_scroll.setWidget(nav_container)
         nav_scroll.setFrameShape(QFrame.NoFrame)
+        nav_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         nav_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         nav_scroll.setStyleSheet("""
             QScrollArea { background: transparent; border: none; }
             QWidget#navContainer { background: transparent; }
-            QScrollBar:vertical { width: 4px; background: transparent; }
-            QScrollBar::handle:vertical { background: #334155; border-radius: 2px; }
+            QScrollBar:vertical {
+                width: 5px;
+                background: #1F4B57;
+                border: none;
+                border-radius: 2px;
+                margin: 0px;
+            }
+            QScrollBar::handle:vertical {
+                background: #8FB6C1;
+                border-radius: 2px;
+                min-height: 36px;
+            }
+            QScrollBar::add-line:vertical,
+            QScrollBar::sub-line:vertical {
+                height: 0px;
+                background: transparent;
+                border: none;
+            }
+            QScrollBar::add-page:vertical,
+            QScrollBar::sub-page:vertical {
+                background: transparent;
+            }
         """)
         # La scroll area prend tout l'espace disponible
         sidebar_layout.addWidget(nav_scroll, 1)
@@ -635,15 +656,24 @@ class MainWindow(QMainWindow):
             self.nav_buttons.append(btn)
             return btn
 
-        account_label = QLabel("Compte")
-        account_label.setObjectName("sidebarSectionLabel")
-        nav_layout.addWidget(account_label)
+        def add_sidebar_section(title, spacing_before=0):
+            if spacing_before:
+                nav_layout.addSpacing(spacing_before)
+
+            divider = QFrame()
+            divider.setObjectName("sidebarSectionDivider")
+            divider.setFrameShape(QFrame.HLine)
+            divider.setFixedHeight(1)
+            nav_layout.addWidget(divider)
+
+            label = QLabel(title.upper())
+            label.setObjectName("sidebarSectionLabel")
+            nav_layout.addWidget(label)
+
+        add_sidebar_section("Compte")
         add_nav("Mon Profil", ProfilePage(self, self.current_user))
 
-        nav_layout.addSpacing(14)
-        nav_label = QLabel("Navigation")
-        nav_label.setObjectName("sidebarSectionLabel")
-        nav_layout.addWidget(nav_label)
+        add_sidebar_section("Navigation", 14)
 
         dashboard_page = DashboardPage(self)
         self.initial_widget = dashboard_page
@@ -685,10 +715,7 @@ class MainWindow(QMainWindow):
                 "Rendre Admin", self.make_admin_callback
             ))
 
-        nav_layout.addSpacing(14)
-        recommendation_label = QLabel("Recommendation")
-        recommendation_label.setObjectName("sidebarSectionLabel")
-        nav_layout.addWidget(recommendation_label)
+        add_sidebar_section("Recommandation", 14)
         add_nav("Recommandations", RecommendationsPage(self))
         nav_layout.addStretch()
 
